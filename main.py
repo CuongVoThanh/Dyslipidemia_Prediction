@@ -7,8 +7,6 @@ warnings.filterwarnings("ignore")
 from lib.config import Config
 from lib.runner import Runner
 
-IS_MLMODEL = True
-
 def parse_args():
     parser = argparse.ArgumentParser(description="Dyslipidemia Prediction")
     parser.add_argument("model", choices=["mlmodel", "dlmodel", "all"], 

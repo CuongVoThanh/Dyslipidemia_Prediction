@@ -1,5 +1,4 @@
 from lib.models.regression_models.linear_model import LinearModel
-
 class Runner():
     def __init__(self, cfg):
         self.models = cfg.models
