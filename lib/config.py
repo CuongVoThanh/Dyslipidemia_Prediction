@@ -10,8 +10,9 @@ from sklearn.ensemble import (AdaBoostRegressor, ExtraTreesRegressor,
                             GradientBoostingRegressor, RandomForestRegressor)
 
 from utils.load_data import load_train_val_set
+# from models.regression_models.nn_regression import NeuralNetwork
 
-MODELS = [LinearRegression(), Ridge(alpha=1.0), 
+ML_MODELS = [LinearRegression(), Ridge(alpha=1.0), 
         Lasso(alpha=0.05), ElasticNet(), 
         MultiTaskElasticNet(alpha=0.1),
         SVR(C=1.0, epsilon=0.2),
@@ -22,7 +23,7 @@ MODELS = [LinearRegression(), Ridge(alpha=1.0),
         GradientBoostingRegressor(),
         RandomForestRegressor(max_depth=2, random_state=0)]
 
-MODEL_NAMES = ['Linear Regression',
+ML_MODEL_NAMES = ['Linear Regression',
         'Regularization L2 Linear Regression',
         'Regularization L1 Linear Regression',
         'ElasticNet',
@@ -34,12 +35,16 @@ MODEL_NAMES = ['Linear Regression',
         'ExtraTreeRegressor',
         'GradientBoostingRegressor']
 
+# DL_MODELS = [NeuralNetwork(input_shape)]
+# DL_MODEL_NAMES = ['Neural Network']
 class Config:
-    def __init__(self, is_one_hot=True, is_drop_col=False, pca_transform=0):
-        self.models = list(zip(MODELS, MODEL_NAMES))
+    def __init__(self, is_one_hot=True, is_drop_col=False, pca_transform=0, epochs=20):
+        self.ML_models = list(zip(ML_MODELS, ML_MODEL_NAMES))
+        # self.DL_models = list(zip(DL_MODELS, DL_MODEL_NAMES))
         self.dataset = load_train_val_set(is_one_hot=is_one_hot, 
                                         is_drop_col=is_drop_col,
                                         pca_transform=pca_transform)
+        self.epochs = epochs
     
     # def load(self, path):
     #     with open(path, 'r') as file:
