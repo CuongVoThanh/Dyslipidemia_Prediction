@@ -14,6 +14,7 @@ class Runner():
         self.data = cfg.dataset
         self.epochs = cfg.epochs
         self.check_model = cfg.check_model
+        self.device = cfg.device
 
     def run(self):
         if self.check_model == 'mlmodel' or self.check_model == 'all':
@@ -26,22 +27,20 @@ class Runner():
         if self.check_model == 'dlmodel' or self.check_model == 'all':
             print("---------------- RUN DEEP LEARNING MODEL ----------------")
 
+            self.data = [torch.tensor(x, dtype=torch.float32).to(self.device) for x in self.data]
             X_train, X_val, Y_train, Y_val = self.data
             assert len(X_train) == len(Y_train) and len(X_val) == len(Y_val) 
 
             # Train-Eval Part
-            self.train(X_train, Y_train, epochs=self.epochs)
+            self.train(X_train, Y_train, self.device, epochs=self.epochs)
             self.eval(X_val, Y_val)
 
     @classmethod       
-    def train(cls, x, y, lr=LR, epochs=20):
-        cls.nn_model = NeuralNetwork(input_shape=x.shape[1])
+    def train(cls, x, y,device='cpu', lr=LR, epochs=20):
+        cls.nn_model = NeuralNetwork(input_shape=x.shape[1]).to(device)
         cls.loss_fn = nn.MSELoss()
         optimizer = torch.optim.Adam(cls.nn_model.parameters(), lr, weight_decay=WEIGHT_DECAY)
-
-        x = x.astype(np.float32)
-        x = torch.from_numpy(x)
-
+        print("[TRAIN-DEVICE]: ",device)
         for t in range(epochs):
             print(f"Epoch {t+1}/{epochs}")
             for (X, label) in zip(x, y):
@@ -58,8 +57,6 @@ class Runner():
         print("Done!")
     
     def eval(self, x, y):
-        x = x.astype(np.float32)
-        x = torch.from_numpy(x)
         test_loss = 0
 
         with torch.no_grad():
