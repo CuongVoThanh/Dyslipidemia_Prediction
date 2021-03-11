@@ -1,6 +1,5 @@
 from torch import nn
 import torch
-# import numpy as np
 
 from lib.models.linear_model import LinearModel
 from lib.models.nn_regression import NeuralNetwork
