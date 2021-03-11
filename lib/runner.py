@@ -14,6 +14,7 @@ class Runner():
         self.data = cfg.dataset
         self.epochs = cfg.epochs
         self.check_model = cfg.check_model
+        self.device = cfg.device
 
     def run(self):
         if self.check_model == 'mlmodel' or self.check_model == 'all':
@@ -25,30 +26,27 @@ class Runner():
 
         if self.check_model == 'dlmodel' or self.check_model == 'all':
             print("---------------- RUN DEEP LEARNING MODEL ----------------")
-
-            X_train, X_val, Y_train, Y_val = self.data
+            print(f"DEVICE-IN-USE: {self.device}")
+            
+            X_train, X_val, Y_train, Y_val = [torch.tensor(data, dtype=torch.float32).to(self.device) for data in self.data]
             assert len(X_train) == len(Y_train) and len(X_val) == len(Y_val) 
 
             # Train-Eval Part
-            self.train(X_train, Y_train, epochs=self.epochs)
+            self.train(X_train, Y_train, self.device, epochs=self.epochs)
             self.eval(X_val, Y_val)
 
     @classmethod       
-    def train(cls, x, y, lr=LR, epochs=20):
-        cls.nn_model = NeuralNetwork(input_shape=x.shape[1])
+    def train(cls, x, y, device='cpu', lr=LR, epochs=20):
+        cls.nn_model = NeuralNetwork(input_shape=x.shape[1]).to(device)
         cls.loss_fn = nn.MSELoss()
         optimizer = torch.optim.Adam(cls.nn_model.parameters(), lr, weight_decay=WEIGHT_DECAY)
-
-        x = x.astype(np.float32)
-        x = torch.from_numpy(x)
-
         for t in range(epochs):
             print(f"Epoch {t+1}/{epochs}")
             for (X, label) in zip(x, y):
                 # Compute prediction and loss
                 optimizer.zero_grad()
                 pred = cls.nn_model(X)
-                loss = cls.loss_fn(pred, torch.tensor(label, dtype=torch.float32))
+                loss = cls.loss_fn(pred, label)
 
                 # Backpropagation
                 loss.backward()
@@ -58,13 +56,10 @@ class Runner():
         print("Done!")
     
     def eval(self, x, y):
-        x = x.astype(np.float32)
-        x = torch.from_numpy(x)
         test_loss = 0
-
         with torch.no_grad():
             for X, label in zip(x, y):
                 pred = self.nn_model(X)
-                test_loss += self.loss_fn(pred, torch.tensor(label, dtype=torch.float32)).item()
+                test_loss += self.loss_fn(pred, label).item()
         test_loss /= len(x)
         print(f"Validation Error: loss RMSE: {test_loss**(1/2):>8f} \n")

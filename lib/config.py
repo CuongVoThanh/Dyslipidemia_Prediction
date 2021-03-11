@@ -38,13 +38,14 @@ ML_MODEL_NAMES = ['Linear Regression',
         'LightGBM']
 
 class Config:
-    def __init__(self, is_one_hot=True, is_drop_col=False, pca_transform=0, epochs=20, check_model='mlmodel'):
+    def __init__(self, device, is_one_hot=True, is_drop_col=False, pca_transform=0, epochs=20, check_model='mlmodel'):
         self.ML_models = list(zip(ML_MODELS, ML_MODEL_NAMES))
         self.dataset = load_train_val_set(is_one_hot=is_one_hot, 
                                         is_drop_col=is_drop_col,
                                         pca_transform=pca_transform)
         self.epochs = epochs
         self.check_model = check_model
+        self.device = device
 
     # def load(self, path):
     #     with open(path, 'r') as file:
