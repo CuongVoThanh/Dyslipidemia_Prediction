@@ -1,6 +1,5 @@
 from torch import nn
 import torch
-import numpy as np
 
 from lib.models.linear_model import LinearModel
 from lib.models.nn_regression import NeuralNetwork
@@ -9,7 +8,7 @@ LR = 1e-4
 WEIGHT_DECAY = 1e-5
 
 class Runner():
-    def __init__(self, cfg, check_ML=True):
+    def __init__(self, cfg):
         self.models = cfg.ML_models
         self.data = cfg.dataset
         self.epochs = cfg.epochs
@@ -40,8 +39,8 @@ class Runner():
         cls.nn_model = NeuralNetwork(input_shape=x.shape[1]).to(device)
         cls.loss_fn = nn.MSELoss()
         optimizer = torch.optim.Adam(cls.nn_model.parameters(), lr, weight_decay=WEIGHT_DECAY)
-        for t in range(epochs):
-            print(f"Epoch {t+1}/{epochs}")
+        for e in range(epochs):
+            print(f"Epoch {e+1}/{epochs}")
             for (X, label) in zip(x, y):
                 # Compute prediction and loss
                 optimizer.zero_grad()

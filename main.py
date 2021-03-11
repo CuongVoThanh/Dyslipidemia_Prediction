@@ -30,8 +30,6 @@ def main():
     args = parse_args()
     device = torch.device('cpu') if not torch.cuda.is_available() or args.cpu else torch.device('cuda')
     cfg = Config(device, args.one_hot, args.drop_col, args.pca_transform, args.epochs, args.model)
-    
-    # for pytorch implementation
 
     if args.model in ['all', 'mlmodel', 'dlmodel']:
         try:
@@ -43,4 +41,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
