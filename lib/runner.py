@@ -46,7 +46,7 @@ class Runner():
                 # Compute prediction and loss
                 optimizer.zero_grad()
                 pred = cls.nn_model(X)
-                loss = cls.loss_fn(pred, torch.tensor(label, dtype=torch.float32))
+                loss = cls.loss_fn(pred, label)
 
                 # Backpropagation
                 loss.backward()
@@ -57,10 +57,9 @@ class Runner():
     
     def eval(self, x, y):
         test_loss = 0
-
         with torch.no_grad():
             for X, label in zip(x, y):
                 pred = self.nn_model(X)
-                test_loss += self.loss_fn(pred, torch.tensor(label, dtype=torch.float32)).item()
+                test_loss += self.loss_fn(pred, label).item()
         test_loss /= len(x)
         print(f"Validation Error: loss RMSE: {test_loss**(1/2):>8f} \n")
