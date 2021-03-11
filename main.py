@@ -33,7 +33,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    cfg = Config(args.one_hot, args.drop_col, args.pca_transform, args.epochs)
+    cfg = Config(args.one_hot, args.drop_col, args.pca_transform, args.epochs, args.model)
     
     # for pytorch implementation
     # device = torch.device('cpu') if not torch.cuda.is_available() or args.cpu else torch.device('cuda')
@@ -41,10 +41,7 @@ def main():
     #TODO: Refactor code
     if args.model in ['all', 'mlmodel', 'dlmodel']:
         try:
-            if args.model == 'dlmodel':
-                runner = Runner(cfg,check_ML=False)
-            else:
-                runner = Runner(cfg,check_ML=True)
+            runner = Runner(cfg)
             runner.run()
         except KeyboardInterrupt:
             logging.info('Building Model interrupted.')
