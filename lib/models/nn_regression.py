@@ -7,7 +7,7 @@ class NeuralNetwork(nn.Module):
             nn.Linear(input_shape, 4),
             nn.LeakyReLU(0.1),
             nn.Linear(4, 1),
-        )   
+        )
     
     def forward(self,x):
         res = self.linear_relu_stack(x)
