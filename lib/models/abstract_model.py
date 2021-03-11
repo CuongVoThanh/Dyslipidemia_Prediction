@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 class AbstractModel(ABC):
     @abstractmethod
     def train(self):
-        """ Run model """
+        """ Train Phrase """
         raise NotImplementedError()
 
     @abstractmethod
