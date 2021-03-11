@@ -15,20 +15,14 @@ def parse_args():
     parser.add_argument('--one_hot', default=True, type=bool, help='Encoding into one hot vector.')
     parser.add_argument('--drop_col', default=False, type=bool, help='Feature Selection Mode.')
     parser.add_argument('--pca_transform', default=300, type=int, help='PCA Mode. (default 300 n_components)')
-    parser.add_argument("--epochs", type=int, help="Epochs to test the model on (Default: 20)")
+    parser.add_argument("--epochs", type=int, default=30, help="Epochs to test the model on (Default: 20)")
     
     #TODO: Move all soft parameter to yml config
     # parser.add_argument("--cfg", help="Config file")
-
     # parser.add_argument("--cpu", action="store_true", help="(Unsupported) Use CPU instead of GPU")
-
     # parser.add_argument("--save_predictions", action="store_true", help="Save predictions to pickle file")
-    # parser.add_argument("--view", choices=["all", "mistakes"], help="Show predictions")
 
     args = parser.parse_args()
-    if args.model not in ["mlmodel", "dlmodel", "all"]:
-        raise Exception("Please input mode in these options: mlmodel, dlmodel, all")
-
     return args
 
 def main():
@@ -38,7 +32,6 @@ def main():
     # for pytorch implementation
     # device = torch.device('cpu') if not torch.cuda.is_available() or args.cpu else torch.device('cuda')
 
-    #TODO: Refactor code
     if args.model in ['all', 'mlmodel', 'dlmodel']:
         try:
             runner = Runner(cfg)

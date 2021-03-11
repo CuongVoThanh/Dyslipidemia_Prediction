@@ -1,4 +1,3 @@
-import torch
 from torch import nn
 
 class NeuralNetwork(nn.Module):
@@ -13,5 +12,3 @@ class NeuralNetwork(nn.Module):
     def forward(self,x):
         res = self.linear_relu_stack(x)
         return res
-    
-    

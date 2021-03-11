@@ -8,9 +8,9 @@ from sklearn.tree import DecisionTreeRegressor
 import xgboost as xgb
 from sklearn.ensemble import (AdaBoostRegressor, ExtraTreesRegressor, 
                             GradientBoostingRegressor, RandomForestRegressor)
+from lightgbm import LGBMRegressor
 
 from utils.load_data import load_train_val_set
-# from models.regression_models.nn_regression import NeuralNetwork
 
 ML_MODELS = [LinearRegression(), Ridge(alpha=1.0), 
         Lasso(alpha=0.05), ElasticNet(), 
@@ -21,7 +21,8 @@ ML_MODELS = [LinearRegression(), Ridge(alpha=1.0),
         AdaBoostRegressor(random_state=0, n_estimators=100),
         ExtraTreesRegressor(),
         GradientBoostingRegressor(),
-        RandomForestRegressor(max_depth=2, random_state=0)]
+        RandomForestRegressor(max_depth=2, random_state=0),
+        LGBMRegressor()]
 
 ML_MODEL_NAMES = ['Linear Regression',
         'Regularization L2 Linear Regression',
@@ -33,10 +34,9 @@ ML_MODEL_NAMES = ['Linear Regression',
         'XGBoost',
         'AdaBoost',
         'ExtraTreeRegressor',
-        'GradientBoostingRegressor']
+        'GradientBoostingRegressor',
+        'LightGBM']
 
-# DL_MODELS = [NeuralNetwork(input_shape)]
-# DL_MODEL_NAMES = ['Neural Network']
 class Config:
     def __init__(self, is_one_hot=True, is_drop_col=False, pca_transform=0, epochs=20, check_model='mlmodel'):
         self.ML_models = list(zip(ML_MODELS, ML_MODEL_NAMES))
@@ -45,6 +45,7 @@ class Config:
                                         pca_transform=pca_transform)
         self.epochs = epochs
         self.check_model = check_model
+
     # def load(self, path):
     #     with open(path, 'r') as file:
     #         self.config_str = file.read()

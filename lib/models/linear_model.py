@@ -1,4 +1,4 @@
-from ..abstract_model import AbstractModel 
+from .abstract_model import AbstractModel 
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
@@ -14,9 +14,9 @@ class LinearModel(AbstractModel):
     def train(self):
         self.model.fit(self.X_train, self.y_train)
         self.predict(self.model, self.X_train, self.y_train, mode='training')
+        self.val()
 
     def val(self):
-        self.train()
         self.predict(self.model, self.X_val, self.y_val, mode='validation')
 
     @staticmethod
