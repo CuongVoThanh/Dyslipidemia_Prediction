@@ -10,9 +10,11 @@ SPLIT = 0.2
 STATE = 42
 
 def load_csv(data_path):
+    """ Load CSV file from a path """
     return pd.read_csv(data_path)
 
 def process_one_hot_data(df):
+    """ Convert to one hot vector """
     # To categorical variable
     le = preprocessing.LabelEncoder()
     df = df.apply(le.fit_transform)
@@ -24,6 +26,12 @@ def process_one_hot_data(df):
 
 def load_train_val_set(split=SPLIT, is_one_hot=False, 
                     is_plot_data=False, is_drop_col=False, pca_transform=0):
+    """
+        Load and transform dataset by config mode 
+        Return: 
+            X, Y or X, Y divide into train/val set
+    """
+    
     X = load_csv(os.path.join(os.getcwd(), TRAINING_PATH[0]))
     Y = load_csv(os.path.join(os.getcwd(), TRAINING_PATH[1]))
 
@@ -40,7 +48,8 @@ def load_train_val_set(split=SPLIT, is_one_hot=False,
         X = process_one_hot_data(X)
         treatment = process_one_hot_data(Y[['treatment']])
         outcome = Y[['outcome']].to_numpy()
-        Y = np.hstack((outcome, treatment))
+        X = np.hstack((X, treatment))
+        Y = outcome
     
     if pca_transform:
         pca = PCA(n_components=pca_transform)

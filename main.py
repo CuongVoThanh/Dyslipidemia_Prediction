@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument('--one_hot', default=True, type=bool, help='Encoding into one hot vector.')
     parser.add_argument('--drop_col', default=False, type=bool, help='Feature Selection Mode.')
     parser.add_argument('--pca_transform', default=300, type=int, help='PCA Mode. (default 300 n_components)')
-    parser.add_argument("--epochs", type=int, default=30, help="Epochs to test the model on (Default: 20)")
+    parser.add_argument("--epochs", type=int, default=50, help="Epochs to test the model on (Default: 20)")
     
     #TODO: Move all soft parameter to yml config
     # parser.add_argument("--cfg", help="Config file")

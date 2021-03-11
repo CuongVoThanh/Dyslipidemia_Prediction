@@ -7,8 +7,8 @@ class LinearModel(AbstractModel):
         super(AbstractModel, self).__init__()
         self.X_train = X_train
         self.X_val = X_val
-        self.y_train = Y_train[:, [0]]
-        self.y_val = Y_val[:, [0]]
+        self.y_train = Y_train
+        self.y_val = Y_val
         self.model = model
 
     def train(self):

@@ -1,10 +1,12 @@
-from torch.utils.data import DataLoader
 from torch import nn
 import torch
 import numpy as np
 
 from lib.models.linear_model import LinearModel
 from lib.models.nn_regression import NeuralNetwork
+
+LR = 1e-4
+WEIGHT_DECAY = 1e-5
 
 class Runner():
     def __init__(self, cfg, check_ML=True):
@@ -17,15 +19,14 @@ class Runner():
         if self.check_model == 'mlmodel' or self.check_model == 'all':
             for model, name in self.models:
                 print(f'================== {name} ==================')
+
                 linear_regression_model = LinearModel(*self.data, model)
                 linear_regression_model.train()
 
         if self.check_model == 'dlmodel' or self.check_model == 'all':
-            print("---------------- RUN DEEP LEARNING ----------------")
+            print("---------------- RUN DEEP LEARNING MODEL ----------------")
 
             X_train, X_val, Y_train, Y_val = self.data
-            Y_train = Y_train[:, [0]]
-            Y_val = Y_val[:, [0]]
             assert len(X_train) == len(Y_train) and len(X_val) == len(Y_val) 
 
             # Train-Eval Part
@@ -33,10 +34,10 @@ class Runner():
             self.eval(X_val, Y_val)
 
     @classmethod       
-    def train(cls, x, y, lr=1e-4, epochs=20):
+    def train(cls, x, y, lr=LR, epochs=20):
         cls.nn_model = NeuralNetwork(input_shape=x.shape[1])
         cls.loss_fn = nn.MSELoss()
-        optimizer = torch.optim.Adam(cls.nn_model.parameters(), lr, weight_decay=1e-5)
+        optimizer = torch.optim.Adam(cls.nn_model.parameters(), lr, weight_decay=WEIGHT_DECAY)
 
         x = x.astype(np.float32)
         x = torch.from_numpy(x)
