@@ -2,11 +2,17 @@ from torch import nn
 import torch
 import numpy as np
 
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_regression
+from sklearn.feature_selection import mutual_info_regression
+
 from lib.models.linear_model import LinearModel
 from lib.models.nn_regression import NeuralNetwork
+from lib.models.cnn_regression import ConvolutionalNeuralNetwork
 
 LR = 1e-4
 WEIGHT_DECAY = 1e-5
+LAMBDA = 0.001
 
 
 class Runner():
@@ -41,15 +47,27 @@ class Runner():
             print(f"DEVICE-IN-USE: {self.device}")
             
             X_train, X_val, Y_train, Y_val = [torch.tensor(data, dtype=torch.float32).to(self.device) for data in self.data]
-            assert len(X_train) == len(Y_train) and len(X_val) == len(Y_val) 
+            assert len(X_train) == len(Y_train) and len(X_val) == len(Y_val)
+            # Train-Eval Part2
+            check_cnn_model = False
+            if check_cnn_model:
+                X_train = torch.reshape(X_train, (X_train.shape[0],1,X_train.shape[1],-1))
+                X_val = torch.reshape(X_val, (X_val.shape[0],1,X_val.shape[1],-1))
+                model = ConvolutionalNeuralNetwork(X_train.shape[2])
+            
+            else:
+                # print("[RUNNER 1.0]: ",X_train.shape, X_val.shape)
+                # X_train = torch.tensor(SelectKBest(mutual_info_regression, k=500).fit_transform(X_train, Y_train), dtype=torch.float32)
+                # X_val = torch.tensor(SelectKBest(mutual_info_regression, k=500).fit_transform(X_val, Y_val), dtype=torch.float32)
+                # print("[RUNNER 2.0]: ",X_train.shape, X_val.shape)
 
-            # Train-Eval Part
-            self.train(X_train, Y_train, self.device, epochs=self.epochs)
+                model = NeuralNetwork(X_train.shape[1])
+            self.train(X_train, Y_train, X_val, Y_val, self.eval,  model, self.device, epochs=self.epochs)
             self.eval(X_val, Y_val)
 
     @classmethod       
-    def train(cls, x, y, device='cpu', lr=LR, epochs=20):
-        cls.nn_model = NeuralNetwork(input_shape=x.shape[1]).to(device)
+    def train(cls, x, y, X_val, Y_val, eval, model, device='cpu', lr=LR, epochs=20):
+        cls.nn_model = model.to(device)
         cls.loss_fn = nn.MSELoss()
         optimizer = torch.optim.Adam(cls.nn_model.parameters(), lr, weight_decay=WEIGHT_DECAY)
         for e in range(epochs):
@@ -59,11 +77,16 @@ class Runner():
                 optimizer.zero_grad()
                 pred = cls.nn_model(X)
                 loss = cls.loss_fn(pred, label)
+                l1_regularization = 0
+                for param in cls.nn_model.parameters():
+                    l1_regularization += torch.norm(param, 1)**2
+                loss += LAMBDA*l1_regularization
 
                 # Backpropagation
                 loss.backward()
                 optimizer.step()
             print(f"loss RMSE: {loss**(1/2):>8f}")
+            eval(X_val, Y_val)
             print("-------------------------------")
         print("Done!")
     
