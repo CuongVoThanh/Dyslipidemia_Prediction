@@ -2,9 +2,6 @@ import logging
 import argparse
 import torch
 
-import warnings
-warnings.filterwarnings("ignore")
-
 from lib.config import Config
 from lib.runner import Runner
 
@@ -15,8 +12,9 @@ def parse_args():
 
     parser.add_argument('--one_hot', default=True, type=bool, help='Encoding into one hot vector.')
     parser.add_argument('--drop_col', default=False, type=bool, help='Feature Selection Mode.')
+    parser.add_argument('--kfold', default=5, type=int, help='Kfold Mode.')
     parser.add_argument('--pca_transform', default=300, type=int, help='PCA Mode. (default 300 n_components)')
-    parser.add_argument("--epochs", type=int, default=50, help="Epochs to test the model on (Default: 20)")
+    parser.add_argument("--epochs", type=int, default=50, help="Epochs to test the model on (Default: 50)")
     parser.add_argument("--cpu", action="store_true", help="(Unsupported) Use CPU instead of GPU")
     
     #TODO: Move all soft parameter to yml config
@@ -29,7 +27,8 @@ def parse_args():
 def main():
     args = parse_args()
     device = torch.device('cpu') if not torch.cuda.is_available() or args.cpu else torch.device('cuda')
-    cfg = Config(device, args.one_hot, args.drop_col, args.pca_transform, args.epochs, args.model)
+    cfg = Config(device, args.one_hot, args.drop_col, args.pca_transform,
+                    args.epochs, args.model, args.kfold)
 
     if args.model in ['all', 'mlmodel', 'dlmodel']:
         try:
