@@ -5,7 +5,7 @@ from sklearn import preprocessing
 from sklearn.decomposition import PCA
 import numpy as np
 
-TRAINING_PATH = ('./dataset/genotypes.csv', './dataset/treatment_outcome.csv')
+DATASET_PATH = ['./dataset/genotypes.csv', './dataset/treatment_outcome.csv']
 SPLIT = 0.2
 STATE = 42
 
@@ -32,8 +32,8 @@ def load_train_val_set(split=SPLIT, is_one_hot=False,
             X, Y or X, Y divide into train/val set
     """
     
-    X = load_csv(os.path.join(os.getcwd(), TRAINING_PATH[0]))
-    Y = load_csv(os.path.join(os.getcwd(), TRAINING_PATH[1]))
+    X = load_csv(os.path.join(os.getcwd(), DATASET_PATH[0]))
+    Y = load_csv(os.path.join(os.getcwd(), DATASET_PATH[1]))
 
     if is_plot_data:
         return X, Y

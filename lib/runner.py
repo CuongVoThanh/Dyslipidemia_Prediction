@@ -1,11 +1,13 @@
 from torch import nn
 import torch
+import numpy as np
 
 from lib.models.linear_model import LinearModel
 from lib.models.nn_regression import NeuralNetwork
 
 LR = 1e-4
 WEIGHT_DECAY = 1e-5
+
 
 class Runner():
     def __init__(self, cfg):
@@ -14,14 +16,25 @@ class Runner():
         self.epochs = cfg.epochs
         self.check_model = cfg.check_model
         self.device = cfg.device
+        self.kfold = cfg.kfold
 
     def run(self):
         if self.check_model == 'mlmodel' or self.check_model == 'all':
+            print("---------------- RUN MACHINE LEARNING MODELS ----------------")
             for model, name in self.models:
                 print(f'================== {name} ==================')
-
+                
+                # Handling warming error
+                if name in self.__get_ignore_warning_models():
+                    self.data[2] = self.data[2].ravel()
+                    self.data[3] = self.data[3].ravel()
+                    
                 linear_regression_model = LinearModel(*self.data, model)
                 linear_regression_model.train()
+            
+                if self.kfold:
+                    X, y = self.merge_dataset(*self.data)
+                    linear_regression_model.evaluate_model_by_kfold(X, y, linear_regression_model.model, self.kfold)
 
         if self.check_model == 'dlmodel' or self.check_model == 'all':
             print("---------------- RUN DEEP LEARNING MODEL ----------------")
@@ -62,3 +75,17 @@ class Runner():
                 test_loss += self.loss_fn(pred, label).item()
         test_loss /= len(x)
         print(f"Validation Error: loss RMSE: {test_loss**(1/2):>8f} \n")
+
+    @staticmethod
+    def merge_dataset(X_train, X_val, y_train, y_val):
+        return np.concatenate([X_train, X_val]), np.concatenate([y_train, y_val])
+    
+    @staticmethod
+    def __get_ignore_warning_models():
+        return [
+            'Support Vector Regression',
+            'AdaBoost',
+            'ExtraTreeRegressor',
+            'GradientBoostingRegressor',
+            'LightGBM',
+        ]
