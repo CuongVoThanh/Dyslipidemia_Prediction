@@ -8,11 +8,6 @@ class AbstractModel(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def val(self):
+    def eval(self):
         """ Validation Phrase """
-        raise NotImplementedError()
-
-    @abstractmethod
-    def predict(self):
-        """ Prediction Result """
         raise NotImplementedError()
