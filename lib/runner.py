@@ -2,10 +2,6 @@ import torch
 import numpy as np
 import logging
 
-# from sklearn.feature_selection import SelectKBest
-# from sklearn.feature_selection import f_regression
-# from sklearn.feature_selection import mutual_info_regression
-
 
 class Runner():
     def __init__(self, cfg):
@@ -13,6 +9,7 @@ class Runner():
         self.setup_logging()
 
     def run(self):
+        """ Execute the model by config """
         if self.cfg.check_model == 'mlmodel' or self.cfg.check_model == 'all':
             self.logger.info("RUN MACHINE LEARNING MODELS")
             for model, name in self.cfg.ML_models:
@@ -58,6 +55,7 @@ class Runner():
                 dl_model.eval()
 
     def create_dlmodel_runner(self, name, X_train, X_val, y_train, y_val):
+        """ Create deep learning model """
         assert name in self.__get_dlmodel_names()
 
         if name == 'ConvolutionalNeuralNetwork':

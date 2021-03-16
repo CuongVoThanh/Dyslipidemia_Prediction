@@ -1,9 +1,12 @@
 import os
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
-import numpy as np
+# from sklearn.feature_selection import SelectKBest
+# from sklearn.feature_selection import f_regression
+# from sklearn.feature_selection import mutual_info_regression
 
 PUBLIC_DATASET_PATH = ['./dataset/genotypes.csv', './dataset/treatment_outcome.csv']
 PRIVATE_DATASET_PATH = ['./dataset/private_test/data_train.csv','./dataset/private_test/label_train.csv',
@@ -27,12 +30,14 @@ def process_one_hot_data(df):
     return le, enc, enc.transform(df).toarray()
 
 def drop_columns(df):
+    """ Drop Columns which no.SNP over 95% """
     with open('./dataset/drop_col.txt', 'r') as f:
         drop_cols = [line.replace("\\n", "").strip() for line in f.readlines()]
         f.close()
     return df.drop(drop_cols, axis=1)
 
 def transform_by_pca(df, n_components):
+    """ Reduce  data dimension by PCA """
     pca = PCA(n_components=n_components)
     pca.fit(df)
     return pca, pca.transform(df)

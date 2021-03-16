@@ -28,6 +28,10 @@ class MLModel(AbstractModel):
 
     @classmethod
     def evaluate_model_by_kfold(cls, X, y, model, kfold, logger):
+        """
+            Utilize K-fold to train the model
+            Return: The best model with respect to get minimum RMSE score of that fold
+        """
         cv = KFold(n_splits=kfold, shuffle=True, random_state=SEED)
         
         best_score = float('inf')
@@ -52,5 +56,6 @@ class MLModel(AbstractModel):
 
     @staticmethod
     def evaluate_model_by_cv(X, y, cv, model):
+        """ Evaluate by any cross validation function """
         scores = cross_val_score(model, X, y, scoring='neg_root_mean_squared_error', cv=cv, n_jobs=-1)
         return -np.max(scores)

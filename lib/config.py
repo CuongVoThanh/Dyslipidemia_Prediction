@@ -29,6 +29,10 @@ class Config:
     
     @staticmethod
     def get_data(mode, is_one_hot, is_drop_col, pca_transform):
+        """ 
+            Get public data or private data
+            Return: X_train, X_val, y_train, y_val 
+        """
         if mode == 'public':
             return load_train_val_public_set(is_one_hot=is_one_hot, 
                                             is_drop_col=is_drop_col,
