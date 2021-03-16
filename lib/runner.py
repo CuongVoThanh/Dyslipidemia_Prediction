@@ -45,29 +45,27 @@ class Runner():
         if self.cfg.check_model == 'dlmodel' or self.cfg.check_model == 'all':
             self.logger.info("RUN DEEP LEARNING MODELS")
             self.logger.debug(f"DEVICE-IN-USE: {self.cfg.device}")
+            
+            X_train, X_val, y_train, y_val = [torch.from_numpy(data).float().to(self.cfg.device) for data in self.cfg.data]
+            assert len(X_train) == len(y_train) and len(X_val) == len(y_val)
 
             for dlmodel_name in self.__get_dlmodel_names():
                 self.logger.info(f'Model: {dlmodel_name}')
-                dl_model = self.create_dlmodel_runner(dlmodel_name)
+                dl_model = self.create_dlmodel_runner(dlmodel_name, X_train, X_val, y_train, y_val)
                 
                 # Train-Eval Part
                 dl_model.train()
                 dl_model.eval()
 
-    def create_dlmodel_runner(self, name):
+    def create_dlmodel_runner(self, name, X_train, X_val, y_train, y_val):
         assert name in self.__get_dlmodel_names()
 
-        X_train, X_val, y_train, y_val = [torch.tensor(data, dtype=torch.float32).to(self.cfg.device) for data in self.cfg.data]
-        assert len(X_train) == len(y_train) and len(X_val) == len(y_val)
-        
         if name == 'ConvolutionalNeuralNetwork':
             X_train = torch.reshape(X_train, (X_train.shape[0], 1, X_train.shape[1], -1))
             X_val = torch.reshape(X_val, (X_val.shape[0], 1, X_val.shape[1], -1))
             self.cfg.model = self.cfg.get_model(name, X_train.shape[2])
         elif name == 'NeuralNetwork':
             self.cfg.model = self.cfg.get_model(name, X_train.shape[1])
-        
-        assert self.cfg.model
 
         self.cfg.data = X_train, X_val, y_train, y_val
         self.cfg.device = self.cfg.device
