@@ -1,0 +1,7 @@
+__pycache__
+.vscode
+
+# Ignore log file
+log_all.txt
+log_mlmodel.txt
+log_dlmodel.txt
