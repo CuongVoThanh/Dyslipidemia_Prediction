@@ -68,7 +68,7 @@ There are several control parameters:
 - **utils**
   - **load_data.py**: Loads dataset from dataset folder and transform by mode.
 - **logging**: Contain log file folder
-- **plot_EDA.ipynb**: Explore Data Analysis and Plot char. 
+- ~~**plot_EDA.ipynb**: Explore Data Analysis and Plot char.~~ 
 - **main.py:** Config and run the runner. 
 
 

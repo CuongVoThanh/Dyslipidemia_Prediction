@@ -21,7 +21,7 @@ class DLModel(AbstractModel):
             for (X, label) in zip(X_train, y_train):
                 # Compute prediction and loss
                 self.optimizer.zero_grad()
-                pred = torch.reshape(self.nn_model(X), (1,))
+                pred = self.nn_model(X)
                 loss = self.loss_fn(pred, label)
 
                 # Backpropagation
@@ -38,7 +38,7 @@ class DLModel(AbstractModel):
         test_loss = 0
         with torch.no_grad():
             for X, label in zip(X_val, y_val):
-                pred = torch.reshape(self.nn_model(X), (1,))
+                pred = self.nn_model(X)
                 test_loss += self.loss_fn(pred, label).item()
         test_loss /= len(X_val)
         return test_loss**(1/2)
