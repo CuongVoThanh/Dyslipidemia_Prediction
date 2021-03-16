@@ -29,24 +29,24 @@ class MLModel(AbstractModel):
     @classmethod
     def evaluate_model_by_kfold(cls, X, y, model, kfold, logger):
         cv = KFold(n_splits=kfold, shuffle=True, random_state=SEED)
-        best_model = {}
-
+        
+        best_score = float('inf')
         for train_index, val_index in cv.split(X):
             X_train, X_val = X[train_index], X[val_index]
             y_train, y_val = y[train_index], y[val_index]
             lr_model = cls(X_train, X_val, y_train, y_val, model, logger)
             _, eval_score = lr_model.train()
 
-            # The best model with that means minimum RMSE score
-            if not best_model or best_model['score'] > eval_score:
-                best_model['score'] = eval_score
-                best_model['model'] = lr_model
+            if best_score > eval_score:
+                best_score = eval_score
+                lr_model.score = eval_score
+                best_model = lr_model 
 
         return best_model
 
     @staticmethod
-    def predict(model, x, y):
-        y_predict = model.predict(x)
+    def predict(model, X, y):
+        y_predict = model.predict(X)
         score = np.sqrt(mean_squared_error(y, y_predict))
         return score
 

@@ -9,7 +9,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Dyslipidemia Prediction")
     parser.add_argument("model", choices=["mlmodel", "dlmodel", "all"], 
                         help="ML Model, DL Model or Run all Models?")
-
+    parser.add_argument("--mode", choices=["public", "private"], 
+                        help="Using public test or private test?")
     parser.add_argument('--one_hot', default=True, type=bool, help='Encoding into one hot vector.')
     parser.add_argument('--drop_col', default=False, type=bool, help='Feature Selection Mode.')
     parser.add_argument('--kfold', default=5, type=int, help='Kfold Mode.')
@@ -18,10 +19,6 @@ def parse_args():
     parser.add_argument("--weight_decay", type=float, default=1e-5, help="Weight_Decay (Default: 1e-5)")
     parser.add_argument("--epochs", type=int, default=50, help="Epochs to test the model on (Default: 50)")
     parser.add_argument("--cpu", action="store_true", help="(Unsupported) Use CPU instead of GPU")
-    
-    #TODO: Move all soft parameter to yml config
-    # parser.add_argument("--cfg", help="Config file")
-    # parser.add_argument("--save_predictions", action="store_true", help="Save predictions to pickle file")
 
     args = parser.parse_args()
     return args
@@ -29,7 +26,7 @@ def parse_args():
 def main():
     args = parse_args()
     device = torch.device('cpu') if not torch.cuda.is_available() or args.cpu else torch.device('cuda')
-    cfg = Config(device, args.one_hot, args.drop_col, args.pca_transform,
+    cfg = Config(device, args.one_hot, args.drop_col, args.pca_transform, args.mode,
                     args.epochs, args.model, args.kfold, args.lr, args.weight_decay)
 
     if args.model in ['all', 'mlmodel', 'dlmodel']:

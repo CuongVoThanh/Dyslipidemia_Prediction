@@ -1,4 +1,3 @@
-# import yaml
 import os
 
 from sklearn.linear_model import (LinearRegression, Ridge, Lasso, 
@@ -11,16 +10,15 @@ from sklearn.ensemble import (AdaBoostRegressor, ExtraTreesRegressor,
 from lightgbm import LGBMRegressor
 
 import lib.models as models
-from utils.load_data import load_train_val_set
+from utils.load_data import load_train_val_public_set, load_train_val_private_set
 
 
 class Config:
-    def __init__(self, device, is_one_hot=True, is_drop_col=False, pca_transform=0, 
+    def __init__(self, device, is_one_hot=True, is_drop_col=False, pca_transform=0, mode='public',
                     epochs=20, check_model='mlmodel', kfold=0, lr=5e-4, weight_decay=1e-5):
         self.ML_models = self.__get_ML_models()
-        self.data = load_train_val_set(is_one_hot=is_one_hot, 
-                                        is_drop_col=is_drop_col,
-                                        pca_transform=pca_transform)
+        self.data = self.get_data(mode, is_one_hot, is_drop_col, pca_transform)
+        self.mode = mode
         self.epochs = epochs
         self.check_model = check_model
         self.device = device
@@ -28,11 +26,17 @@ class Config:
         self.lr = lr
         self.weight_decay = weight_decay
         self.log_path = self.get_log_path(self.check_model)
-
-    # def load(self, path):
-    #     with open(path, 'r') as file:
-    #         self.config_str = file.read()
-    #     self.config = yaml.load(self.config_str, Loader=yaml.FullLoader)
+    
+    @staticmethod
+    def get_data(mode, is_one_hot, is_drop_col, pca_transform):
+        if mode == 'public':
+            return load_train_val_public_set(is_one_hot=is_one_hot, 
+                                            is_drop_col=is_drop_col,
+                                            pca_transform=pca_transform)
+        elif mode == 'private':
+            return load_train_val_private_set(is_one_hot=is_one_hot, 
+                                            is_drop_col=is_drop_col,
+                                            pca_transform=pca_transform)
 
     @staticmethod
     def get_model(name, *parameters, **kwargs):

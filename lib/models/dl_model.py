@@ -29,8 +29,9 @@ class DLModel(AbstractModel):
                 self.optimizer.step()
 
             loss_eval = self.eval()
-            self.logger.info('Epoch [{}/{}] - Train Loss: {:.5f} - Val Loss {:.5f}'.format(e, self.cfg.epochs, loss**(1/2), loss_eval))
+            self.logger.info('Epoch [{}/{}] - Train Loss: {:.5f} - Val Loss {:.5f}'.format(e+1, self.cfg.epochs, loss**(1/2), loss_eval))
             self.scheduler.step(-loss_eval)
+        self.logger.info('Validation Score: {:.5f}'.format(self.eval()))
     
     def eval(self):
         _, X_val, _, y_val = self.cfg.data

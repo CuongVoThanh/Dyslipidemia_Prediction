@@ -14,10 +14,10 @@ class Runner():
 
     def run(self):
         if self.cfg.check_model == 'mlmodel' or self.cfg.check_model == 'all':
-
             self.logger.info("RUN MACHINE LEARNING MODELS")
             for model, name in self.cfg.ML_models:
                 self.logger.info(f'Model: {name}')
+
                 # Handling warming error
                 if name in self.__get_ignore_warning_models():
                     self.cfg.data[2] = self.cfg.data[2].ravel()
@@ -25,18 +25,29 @@ class Runner():
                 
                 linear_regression_model = self.cfg.get_model('MLModel', *self.cfg.data, model, self.logger)
                 train_score, eval_score = linear_regression_model.train()
-                self.logger.info(f"[80/20] Training: {train_score:.3f} - Validation: {eval_score:.3f}")
-
+                self.logger.info(f"[80-20] Training: {train_score:.3f} - Validation: {eval_score:.3f}")
+                
                 if self.cfg.kfold:
-                    X, y = self.merge_dataset(*self.cfg.data)
+                    assert self.cfg.mode in ['public', 'private']
+
+                    if self.cfg.mode == 'public':
+                        X, y = self.merge_dataset(*self.cfg.data)
+                    elif self.cfg.mode == 'private':
+                        X, y = self.cfg.data[0], self.cfg.data[2]    
+
                     best_model = linear_regression_model.evaluate_model_by_kfold(X, y, linear_regression_model.model, self.cfg.kfold, self.logger)
-                    self.logger.info('[{}-Folds] Validation: {:.3f}'.format(self.cfg.kfold, best_model['score']))
+                    self.logger.info('[{}-Folds] Validation: {:.3f}'.format(self.cfg.kfold, best_model.score))
+                    
+                    if self.cfg.mode == 'private':
+                        test_score = best_model.predict(best_model.model, self.cfg.data[1], self.cfg.data[3])
+                        self.logger.info('[{}-Folds] Test: {:.3f}'.format(self.cfg.kfold, test_score))
 
         if self.cfg.check_model == 'dlmodel' or self.cfg.check_model == 'all':
             self.logger.info("RUN DEEP LEARNING MODELS")
             self.logger.debug(f"DEVICE-IN-USE: {self.cfg.device}")
 
             for dlmodel_name in self.__get_dlmodel_names():
+                self.logger.info(f'Model: {dlmodel_name}')
                 dl_model = self.create_dlmodel_runner(dlmodel_name)
                 
                 # Train-Eval Part
