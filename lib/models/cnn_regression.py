@@ -10,7 +10,7 @@ class ConvolutionalNeuralNetwork(nn.Module):
         self.drop_out = nn.Dropout(0.2)
         self.selu = nn.SELU()
 
-    def forward(self,x):
+    def forward(self, x):
         out = self.conv1D_1(x)
         out = self.selu(out)
         out = self.drop_out(out)

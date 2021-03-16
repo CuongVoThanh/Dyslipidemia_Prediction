@@ -21,7 +21,7 @@ class DLModel(AbstractModel):
             for (X, label) in zip(X_train, y_train):
                 # Compute prediction and loss
                 self.optimizer.zero_grad()
-                pred = self.nn_model(X)
+                pred = torch.reshape(self.nn_model(X), (1,))
                 loss = self.loss_fn(pred, label)
 
                 # Backpropagation
@@ -29,15 +29,16 @@ class DLModel(AbstractModel):
                 self.optimizer.step()
 
             loss_eval = self.eval()
-            self.logger.info('Epoch [{}/{}] - Train Loss: {:.5f} - Val Loss {:.5f}'.format(e, self.cfg.epochs, loss**(1/2), loss_eval))
+            self.logger.info('Epoch [{}/{}] - Train Loss: {:.5f} - Val Loss {:.5f}'.format(e+1, self.cfg.epochs, loss**(1/2), loss_eval))
             self.scheduler.step(-loss_eval)
+        self.logger.info('Validation Score: {:.5f}'.format(self.eval()))
     
     def eval(self):
         _, X_val, _, y_val = self.cfg.data
         test_loss = 0
         with torch.no_grad():
             for X, label in zip(X_val, y_val):
-                pred = self.nn_model(X)
+                pred = torch.reshape(self.nn_model(X), (1,))
                 test_loss += self.loss_fn(pred, label).item()
         test_loss /= len(X_val)
         return test_loss**(1/2)
