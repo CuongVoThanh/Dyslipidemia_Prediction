@@ -1,6 +1,6 @@
 <div align="center"> 
 
-# Dyslipidemia_Prediction 
+# Dyslipidemia Prediction 
 </div>
 
 In this repository, we utilize machine learning and deep learning techniques to predict Apolipoprotein C-III (ApoC-III), which is the measurement affecting indirectly blood lipid disease. Concretely, TG and LDL-C are two main factors causing Dyslipidemia by clinging to the vessel wall obstructs blood circulation. Lipoprotein lipase (LPL) is an enzyme in other to hydrolysis TG while ApoC-III inhibits LPL. They operate and regulate the body continuously. Decreasing ApoC-III makes reducing TG and LDL-C so helps reduce subclinical atherosclerosis in the body. Conversely, it is harmful to the body by increasing TG in the blood. We incorporate Single-nucleotide polymorphism (SNP) of patients with treatments that are drugs that help reduce ApoC-III. Compatible metrics for each person are different. Therefore, we select the treatment which has the minimum ApoC-III score will be proposed as the main treatment method for different patients.
